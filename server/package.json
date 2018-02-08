@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "mongoose": "^5.0.3"
+  },
+  "dependencies": {
+    "socket.io": "^2.0.4"
+  }
+}
