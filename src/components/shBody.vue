@@ -36,6 +36,7 @@
 
 <script>
     import shHeader from './shHeader'
+    import { mapActions } from 'vuex'
     export default {
         name: 'shBody',
         data() {
@@ -52,6 +53,7 @@
             }
         },
         methods: {
+            ...mapActions(['logout']),
             tabsClick(data) {
                 if(this.loading||this[data.name]||!this.searchValue) {return}
                 this.queryClick()   
@@ -104,7 +106,10 @@
             }
             //
             window.onbeforeunload = function() {
-                return '重新加载，搜索信息将丢失'
+                console.log("退出")
+            }
+            window.onunload = function() {
+                that.logout()
             }
 
         },

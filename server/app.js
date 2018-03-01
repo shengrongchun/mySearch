@@ -18,8 +18,6 @@ query(app)
 var chat = require('./chat')
 chat(server)
 
-
-
 //
 server.listen(9000)
 console.log('server starting 9000')

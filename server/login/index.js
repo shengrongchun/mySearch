@@ -7,6 +7,10 @@ var sign = require('./sign')
 //登录
 var login = require('./login')
 
+const fs = require('fs')
+const path = require('path')
+const express = require('express')
+
 var Login = function (app) {
     //实例化cookie
     app.use(cookieParser())
@@ -18,7 +22,8 @@ var Login = function (app) {
         resave: true, // 即使 session 没有被修改，也保存 session 值，默认为 true
         saveUninitialized: false //
     }))
-
+    //将静态资源文件所在的目录作为参数传递给 express.static 中间件就可以提供静态资源文件的访问了
+    app.use('/static',express.static(path.resolve(__dirname, '../dist/static')))
     //
     app.use(function(req, res, next) {
         // body...
@@ -27,7 +32,7 @@ var Login = function (app) {
                 login(reslove, reject, req.body)
             })
             promise.then((data)=> {//成功
-                req.session.name = req.body.email+req.body.password
+                //req.session.name = req.body.email+req.body.password
                 res.send(data)
             },(msg)=> {//失败
                 res.status(401).send(msg)
@@ -44,13 +49,8 @@ var Login = function (app) {
                 res.status(401).send(msg)
             })
         } else if(req.url == '/') {
-            console.log('hello world')
-            if (req.session.name) {
-                //
-                res.send('ok')
-            } else {
-                res.send(null)
-            }
+            html = fs.readFileSync(path.resolve(__dirname, '../dist/index.html'), 'utf-8');
+            res.send(html)
         } else {
             //
             next() 
