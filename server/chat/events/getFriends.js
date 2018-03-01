@@ -7,7 +7,7 @@ module.exports = (allSocketList, socket) => ({ from }) => {//
         .exec()
         .then(doc => {
             if (doc.friends.length < 1) return []
-            return User.find({_id: {$in: doc.friends}}).select('_id name').exec()
+            return User.find({_id: {$in: doc.friends}}).select('_id name avatar').exec()
         })
         .then(list => {
             socket.emit('getFriends', list)

@@ -1,6 +1,6 @@
 const User = require('../../model').User
 
-module.exports = (allSocketList, socket, io) => ({ from, friendId }) => {//
+module.exports = (allSocketList, socket, allSocketMsgList) => ({ from, friendId }) => {//
 
 	//询问用户是否同意加好友
 	if( allSocketList[friendId] ) {//对方在线
@@ -21,10 +21,21 @@ module.exports = (allSocketList, socket, io) => ({ from, friendId }) => {//
 				})
 			} else{
 				socket.emit('addFriend', {error:'对方拒绝了你的添加请求'})
+				allSocketList[friendId].emit('okAddFriend', {error:'添加失败'})
 			}
 		})
 	}else {//对方不在线
-		socket.emit('addFriend', {error:'对方不在线'})
+		if(allSocketMsgList[ friendId ]) {
+            allSocketMsgList[ friendId ].push({
+                from,
+                type: 'addFriendOk'
+            })
+        } else {
+            allSocketMsgList[ friendId ] = [{
+                from,
+                type: 'addFriendOk'
+            }]
+        }
 	}
         
 }

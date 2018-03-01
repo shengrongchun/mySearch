@@ -7,7 +7,6 @@
                     {{currentOne.name}}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>查看用户</el-dropdown-item>
                     <el-dropdown-item command="delete">删除用户</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
@@ -16,7 +15,7 @@
                 <div v-if="messageList&&messageList.length > 0">
                     <div class="message" :class="{'me': user._id === msg._id}" v-for="(msg, key) in messageList" 
                         :key="key">
-                        <img :title="msg.name" class="avatar" :src="require('@/assets/img/tou.jpg')"/>
+                        <img :title="msg.name" class="avatar" :src="msg.avatar"/>
                         <div class="content">
                             <h4 v-if="user._id !== msg._id" class="nickname">{{msg.name}}</h4>
                             <div class="bubble" :class="{'right': user._id === msg._id,'left':user._id !== msg._id}">
@@ -44,6 +43,7 @@
                 </div>
                 <div class="submit">
                     <pre id="editArea" contenteditable="true" 
+                    @focus.exact = "noCurrentNum"
                     @keydown.enter.stop.prevent.exact="submitMsg"
                     @keydown.ctrl.enter.stop.exact="breakLine($event)"
                     ></pre>
@@ -72,7 +72,7 @@
             }
         },
         computed: {
-            ...mapState(['currentOne', 'messages', 'user']),
+            ...mapState(['currentOne', 'messages', 'user', 'counts']),
             messageList() {
                 this.scrollTop()
                 return this.messages[this.currentOne._id]
@@ -82,7 +82,12 @@
             }
         },
         methods: {
-            ...mapActions(['pushMsg', 'deleteUser']),
+            ...mapActions(['pushMsg', 'deleteUser', 'changeCurrentOne']),
+            noCurrentNum() {
+                if(this.counts[this.currentOne._id]>0) {
+                    this.changeCurrentOne(this.currentOne)
+                }
+            },
             submitMsg() {
                 let ctt = this.editDom.innerHTML
                 if (!ctt || ctt.match(/^\s*$/)) return
@@ -163,6 +168,7 @@
         width: 100%;
         height: 100%;
         background: #eee;
+        line-height: 1;
         
         .right-header {
             text-align: center;

@@ -11,7 +11,7 @@ module.exports = (reslove, reject, data) => {
                 reject('密码错误')
             } else {
                 //
-                reslove({_id: user._id, name: user.name, msg: '登录成功'})  
+                reslove({_id: user._id, name: user.name, avatar: user.avatar, msg: '登录成功'})  
             }
         }).catch(() => {
             reject('登录失败')

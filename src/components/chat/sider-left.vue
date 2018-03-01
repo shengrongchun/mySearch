@@ -2,7 +2,7 @@
     <div class="sider-left">
         <header class="left-header">
             <div class="avatar">
-                <img :src="require('@/assets/img/tou.jpg')"/>
+                <img :src="user.avatar"/>
             </div>
             <div class="info">
                 <span class="display-name">{{user.name}}</span>
@@ -14,22 +14,30 @@
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item command="friends">加好友</el-dropdown-item>
                             <el-dropdown-item command="groups">加群组</el-dropdown-item>
+                            <el-dropdown-item command="createGroups">创建群组</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </div>
             </div>
         </header>
         <div class="left-search">
-            <el-autocomplete prefix-icon="el-icon-search" class="input inline-block" placeholder="搜索" v-model="searchValue" size="small" :trigger-on-focus="false"
-                    @keyup.enter.native="search" :fetch-suggestions="search"
-                    >
+            <el-autocomplete prefix-icon="el-icon-search" class="input inline-block" placeholder="搜索"
+            v-model="searchValue" size="small" :trigger-on-focus="false"
+            popper-class="search-chat-item"
+            :fetch-suggestions="search"
+            @select="handleSelect"
+            >
+                <template slot-scope="props">
+                    <img width="30" class="avatar" :src="props.item.avatar"/>
+                    <span class="name">{{ props.item.name }}</span>
+                </template>
             </el-autocomplete>
         </div>
         <div class="left-body">
             <div class="tabs">
                 <ul>
                     <li @click="type='info'">
-                        <el-badge :value="countNum" :max="99" class="item">
+                        <el-badge :value="msgListNum" :max="99" class="item">
                             <i v-if="type == 'info'" class="icon iconfont icon-interactive_fill active"></i>
                             <i v-else class="icon iconfont icon-interactive"></i>
                         </el-badge>
@@ -41,7 +49,7 @@
                         </el-badge>
                     </li>
                     <li @click="type='notice'">
-                        <el-badge :value="0" :max="99" class="item">
+                        <el-badge :value="noticeList.length" :max="99" class="item">
                             <i v-if="type == 'notice'" class="icon iconfont icon-remind_fill active"></i>
                             <i v-else class="icon iconfont icon-remind"></i>
                         </el-badge>
@@ -55,10 +63,17 @@
                             text-color="#fff"
                             active-text-color="#ffd04b">
                         <el-menu-item @click="changeActiveOne(item)" :key="key" :index="key+''" v-for="(item,key) in activeMsgList">
-                            <img :src="require('@/assets/img/tou.jpg')"/>
-                            <el-badge :value="counts[item._id]" :max="99" class="badge">
-                                <span>{{item.name}}</span>
-                            </el-badge>
+                            <div @contextmenu="showMenu($event, key, contextMenuInfoData)">
+                                <img :src="item.avatar"/>
+                                <el-badge :value="counts[item._id]" :max="99" class="badge">
+                                    <span>{{item.name}}</span>
+                                </el-badge>
+                            </div>
+                            <vue-context-menu :contextMenuData="contextMenuInfoData"
+                                :transferIndex="transferIndex"
+                                @delInfo="delInfo(item)"
+                                class="customMenu"
+                            ></vue-context-menu>
                         </el-menu-item>
                     </el-menu>
                 </div>
@@ -67,22 +82,34 @@
                         background-color="#2e3238"
                         text-color="#fff"
                         active-text-color="#ffd04b">
-                        <el-menu-item-group>
-                            <template slot="title">群组</template>
-                            <el-menu-item index="1-1">
-                                <img :src="require('@/assets/img/tou.jpg')"/>
-                                <span>选项1</span>
-                            </el-menu-item>
-                            <el-menu-item index="1-2">
-                                <!-- <img :src="require('@/assets/img/tou.jpg')"/> -->
-                                <img :src="require('@/assets/img/temp.png')"/>
-                                <span>选项2</span>
+                        <el-menu-item-group title="群组" v-if="groupsList.length>0">
+                            <el-menu-item @click="changeActiveOne(group)" v-for="(group, key) in groupsList" :key="key" :index="key+''"
+                                >
+                                <div @contextmenu="showMenu($event, key, contextMenuGroData)">
+                                    <img :src="group.avatar"/>
+                                    <span>{{group.name}}</span>
+                                </div>
+
+                                <vue-context-menu :contextMenuData="contextMenuGroData"
+                                        :transferIndex="transferIndex"
+                                        @removeGroup="removeGroup(group)"
+                                        class="customMenu"
+                                ></vue-context-menu>
                             </el-menu-item>
                         </el-menu-item-group>
                         <el-menu-item-group title="好友">
-                            <el-menu-item @click="changeActiveOne(friend)" v-for="(friend, key) in friendsList" :key="key" :index="key+''">
-                                <img :src="require('@/assets/img/tou.jpg')"/>
-                                <span>{{friend.name}}</span>
+                            <el-menu-item @click="changeActiveOne(friend)" v-for="(friend, key) in friendsList" :key="key" :index="key+''"
+                                >
+                                <div @contextmenu="showMenu($event, key, contextMenuFriData)">
+                                    <img :src="friend.avatar"/>
+                                    <span>{{friend.name}}</span>
+                                </div>
+
+                                <vue-context-menu :contextMenuData="contextMenuFriData"
+                                        :transferIndex="transferIndex"
+                                        @delFriend="delFriend(friend)"
+                                        class="customMenu"
+                                ></vue-context-menu>
                             </el-menu-item>
                         </el-menu-item-group>
                     </el-menu>
@@ -92,85 +119,187 @@
                             background-color="#2e3238"
                             text-color="#fff"
                             active-text-color="#ffd04b">
-                        <el-menu-item @click="changeActiveOne(item)" :key="key" :index="key+''" v-for="(item,key) in activeMsgList">
-                            <el-badge :value="counts[item._id]" :max="99" class="badge">
-                                <img :src="require('@/assets/img/tou.jpg')"/>
-                                <span>{{item.name}}</span>
-                            </el-badge>
+                        <el-menu-item v-for="(item,key) in noticeList" :index="key+''" :key="key" class="noticeAddfri">
+                            <div @contextmenu="showMenu($event, key, contextMenuNoticeData)">
+                                <el-badge :value="1" :max="99" class="badge">
+                                    <img :src="item.avatar"/>
+                                    <span>{{item.name}}</span>
+                                </el-badge>
+                                <p v-if="item.type == 'resolve'">同意添加好友</p>
+                                <p v-if="item.type == 'reject'">拒绝添加好友</p>
+                                <p v-if="item.type == 'add'">请求添加好友</p>
+                                <div v-if="item.type == 'add'">
+                                    <el-button size="mini" @click="addError(item)">不同意</el-button>
+                                    <el-button type="success" size="mini" @click="addOk(item)">同意</el-button>
+                                </div>
+                            </div>
+                            <vue-context-menu :contextMenuData="contextMenuNoticeData"
+                                :transferIndex="transferIndex"
+                                @delNotice="delNotice(item)"
+                                class="customMenu"
+                            ></vue-context-menu>
                         </el-menu-item>
                     </el-menu>
                 </div>
             </div>
         </div>
-
-
-
-
-
-
-
-        <!--添加好友-->
-        <el-dialog size="tiny" class="text-center" :visible.sync="dialog.friends" title="添加好友" >
-            <el-input placeholder="请输入好友名称" v-model="addFriendsKey">
-            </el-input><el-button v-if="addFriendsKey" @click="searchFirends">搜索</el-button>
-
-            <ul class="search-result" v-if="searchResultList.length > 0">
-                <li v-for="item in searchResultList">
-                    <span>{{item.name}}</span>
-                    <el-button @click="addFriends(item)">加入</el-button>
-                </li>
-            </ul>
-            <p v-else>未搜索到结果</p>
-        </el-dialog>
-        <!--添加群组-->
-        <el-dialog size="tiny" class="text-center" :visible.sync="dialog.groups" title="添加群组" >
-            
-        </el-dialog>
     </div>
 </template>
 
 <script>
-    import { mapState, mapActions } from 'vuex'
+    import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
     export default {
         name: 'siderLeft',
         data() {
             return {
                 searchValue: null,
                 type: 'friends',
-                dialog: {
-                    friends: false,
-                    groups: false
+                transferIndex: null, // Show the menu that was clicked
+                contextMenuFriData: {
+                    menuName: 'friends',
+                    axios: {
+                        x: null,
+                        y: null
+                    },
+                    menulists: [
+                        {
+                            fnHandler: 'delFriend',
+                            btnName: '删除好友'
+                        }                  
+                    ]
                 },
-                addFriendsKey: null
+                contextMenuGroData: {
+                    menuName: 'groups',
+                    axios: {
+                        x: null,
+                        y: null
+                    },
+                    menulists: [
+                        {
+                            fnHandler: 'removeGroup',
+                            btnName: '退出群组'
+                        }                 
+                    ]
+                },
+                contextMenuNoticeData: {
+                    menuName: 'notice',
+                    axios: {
+                        x: null,
+                        y: null
+                    },
+                    menulists: [
+                        {
+                            fnHandler: 'delNotice',
+                            btnName: '删除消息'
+                        }                  
+                    ]
+                },
+                contextMenuInfoData: {
+                    menuName: 'info',
+                    axios: {
+                        x: null,
+                        y: null
+                    },
+                    menulists: [
+                        {
+                            fnHandler: 'delInfo',
+                            btnName: '删除会话'
+                        }                  
+                    ]
+                },
             }
         },
         computed: {
-            ...mapState(['user', 'searchResultList', 'friendsList', 'currentOne', 'activeMsgList', 'counts', 'countNum']),
+            ...mapState(['user', 'friendsList', 'groupsList', 'currentOne', 'activeMsgList', 'counts', 'noticeList']),
+            ...mapGetters(['msgListNum']),
+            chatSearchList() {
+                return this.friendsList.concat(this.groupsList)
+            }
         },
         methods: {
-            ...mapActions(['searchUsers', 'addFriend', 'changeCurrentOne']),
-            search() {
-
+            ...mapActions(['changeCurrentOne', 'addFriendOk', 'deleteUser', 'deleteGroup']),
+            ...mapMutations(['setAddFriOrGroDialog', 'delNoticeListItem', 'delActiveMsgListItem', 'clearCurrentone']),
+            showMenu(event, index, contextMenuData) {
+                this.transferIndex = index // tranfer index to child component
+                event.preventDefault()
+                var x = event.clientX
+                var y = event.clientY
+                contextMenuData.axios = {
+                  x, y
+                }
             },
-            tabsClick() {
-
+            delFriend(data) {
+                this.$confirm('确定删除好友吗？')
+                    .then(() => {
+                        this.deleteUser(data)
+                        this.delActiveMsgListItem(data)//如果有会话也一起删除
+                    }).catch(() => {})
+            },
+            removeGroup(data) {
+                // if(data.owner == this.user._id) {
+                //     alert('你是群主，你不能退出群组')
+                //     return
+                // }
+                this.$confirm('确定退出群组吗？')
+                    .then(() => {
+                        this.deleteGroup(data)
+                        this.delActiveMsgListItem(data)//如果有会话也一起删除
+                    }).catch(() => {})
+            },
+            delNotice(data) {
+                this.$confirm('确定删除消息吗？')
+                    .then(() => {
+                        this.delNoticeListItem(data)
+                        if(data.type == 'add') {//说明删除的是添加消息，默认就是拒绝
+                            this.addError(data)
+                        }
+                    }).catch(() => {})
+            },
+            delInfo(data) {
+                this.$confirm('确定删除会话吗？')
+                    .then(() => {
+                        this.delActiveMsgListItem(data)
+                        if(this.currentOne._id == data._id) {
+                            this.clearCurrentone()
+                        }
+                    }).catch(() => {})
+            },
+            search(queryString, cb) {
+                let results = queryString ? this.chatSearchList.filter(this.createFilter(queryString)) : this.chatSearchList
+                // 调用 callback 返回建议列表的数据
+                cb(results)
+            },
+            createFilter(queryString) {
+                return (restaurant) => {
+                    return (restaurant.name.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
+                }
+            },
+            handleSelect(item) {
+                this.changeCurrentOne(item)
             },
             showDialog(type) {
-                this.dialog[type] = true
-            },
-            searchFirends() {
-                this.searchUsers(this.addFriendsKey)
-            },
-            addFriends(item) {
-                this.addFriend(item)
-                this.dialog.friends = false
+                this.setAddFriOrGroDialog({
+                    type: type,
+                    show: true
+                })
             },
             changeActiveOne(item) {
                 let cur = this.currentOne
                 if (cur && cur._id === item._id) return
                 this.changeCurrentOne(item)
+            },
+            addOk(item) {
+                this.addFriendOk({
+                    mask: true,
+                    data: item
+                })
+            },
+            addError(item) {
+                this.addFriendOk({
+                    mask: false,
+                    data: item
+                })
             }
-
         }
     }
 </script>
@@ -180,6 +309,7 @@
         width: 100%;
         height: 100%;
         background: #2e3238;
+        line-height: 1;
         
         .left-header {
             padding: 15px;
@@ -241,8 +371,7 @@
                     border: none;
                     border-radius: 0;
                     background: #26292e;
-                }
-                
+                } 
             }
         }
 
@@ -296,6 +425,34 @@
                             line-height: 1;
                             span {
                                 margin-right: 5px;
+                            }
+                        }
+
+                        &.noticeAddfri {
+                            height: auto;
+                        }
+
+                        /deep/ .customMenu {
+                            box-shadow: rgba(0,0,0,.1) 2px 3px 10px;
+                            border-radius: 4px;
+                            border: 1px solid #eee;
+                            min-width: 125px;
+                            .context-menu-list {
+                               width: auto;
+                               height: auto;
+                               border-bottom: 1px solid #f1f1f1; 
+                               border-radius: none;
+                            }
+
+                            .context-menu-list button {
+                                background: #fff;
+                                padding: 8px;
+                                font-size: 14px;
+                                &:hover {
+                                    background: #f0f0f0;
+                                    color: #000;
+                                    border-radius: 0;
+                                }
                             }
                         }
                     }

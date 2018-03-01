@@ -10,9 +10,12 @@ import store from './store'
 import { Button, RadioButton, RadioGroup, 
 Autocomplete, Tabs, TabPane, Loading, Dialog, Form, FormItem, Input, Alert,
 Dropdown, DropdownMenu, DropdownItem, Badge, Menu, MenuItem, Row, Col,
-MenuItemGroup, Tooltip
+MenuItemGroup, Tooltip, checkbox, checkboxGroup, Notification, MessageBox
 } from 'element-ui'
-
+//
+import VueContextMenu from 'vue-contextmenu'
+Vue.use(VueContextMenu)
+//
 Vue.config.productionTip = false
 //
 Vue.use(VueResource)
@@ -39,11 +42,16 @@ Vue.use(MenuItemGroup)
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(Tooltip)
+Vue.use(checkbox)
+Vue.use(checkboxGroup)
+
+Vue.prototype.$notify = Notification
+Vue.prototype.$confirm = MessageBox.confirm
 
 
 
 /* eslint-disable no-new */
-new Vue({
+window.vue = new Vue({
   el: '#app',
   store,
   components: { App },

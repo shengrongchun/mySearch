@@ -16,17 +16,15 @@
                 <sh-login></sh-login>
             </div>
         </div>
-        <sh-dialog></sh-dialog>
-        <div style="position:fixed;width:600px;height:550px;margin:10px;">
-           <we-chat></we-chat> 
-        </div>
+        <sh-login-dialog></sh-login-dialog>
+        <sh-chat-dialog></sh-chat-dialog>
     </div>
 </template>
 
 <script>
 import shLogin from './login'
-import shDialog from './login/dialog'
-import weChat from './chat/weChat'
+import shLoginDialog from './login/dialog'
+import shChatDialog from './chat/dialog'
 
 export default {
     name: 'shHeader',
@@ -65,8 +63,8 @@ export default {
     },
     components: {
         shLogin,
-        shDialog,
-        weChat
+        shLoginDialog,
+        shChatDialog
     }
 }
 </script>

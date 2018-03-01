@@ -36,4 +36,19 @@ export default {
     .clearfix{
         *zoom: 1;
     }
+    .search-chat-item {//chat搜索下拉
+        .el-scrollbar {
+            overflow: inherit;
+            .el-autocomplete-suggestion__wrap.el-scrollbar__wrap {
+                margin-right: 0 !important;
+            }
+            .avatar {
+                vertical-align: middle;
+                border-radius: 2px;
+            }
+            .name {
+                margin-left: 5px;
+            }
+        }
+    }
 </style>

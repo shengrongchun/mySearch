@@ -14,6 +14,6 @@ db.on('open', function(err){
 
 module.exports = {
     User: require("./table/user"),
-    // Group: require("./group"),
+    Group: require("./table/group"),
     Message: require("./table/message")
 }

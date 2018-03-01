@@ -133,7 +133,7 @@
             background: #fff;
             padding: 0 10px 0 150px;
             float: left;
-            width: 10%;
+            width: 60%;
             min-height: 300px;
             height: 100%;
             .el-tabs.el-tabs--top {
@@ -149,7 +149,7 @@
             -moz-box-sizing: border-box; /* Firefox */  
             -webkit-box-sizing: border-box; /* Safari */ 
             float: left;
-            width: 90%;
+            width: 40%;
             height: 300px;
             background: #fff;
             border-left: 1px solid #e1e1e1;

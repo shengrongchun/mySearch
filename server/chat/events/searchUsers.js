@@ -1,12 +1,12 @@
 const User = require('../../model').User
 
-module.exports = (allSocketList, socket, io) => ({ from, keyword }) => {
+module.exports = (allSocketList, socket) => ({ from, keyword }) => {//
     User
         .find({
             name: {$regex: new RegExp(keyword)}
         })
         .limit(5)
-        .select('_id name')
+        .select('_id name avatar')
         .exec()
         .then(users => {
             if (!users) return []

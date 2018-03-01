@@ -12,13 +12,14 @@ eventNames.forEach(event => {
 })
 //
 let allSocketList = []
+let allSocketMsgList = []
 var chat = function(server) {
     var io = require('socket.io')(server)
     //监听所有连接
     io.on('connection', function(socket) {
         //socket客户端socket 
         for(let eventName in map) {
-            socket.on( eventName, map[eventName](allSocketList, socket, io) )
+            socket.on( eventName, map[eventName](allSocketList, socket, allSocketMsgList) )
         }
     })
 }

@@ -1,17 +1,17 @@
 <template>
     <div id="shLogin">
         <div v-if="user.name">
-            <el-badge :value="countNum" :max="99" class="item">
-                <i class="el-icon-message"></i>
+            <el-badge :value="num" :max="99" class="item">
+                <i @click="showChat" class="el-icon-message"></i>
             </el-badge>
+            <img :src="user.avatar" width="30" style="verticalAlign: middle;borderRadius:3px;">
             <el-dropdown @command="handleCommand">
                 <span class="el-dropdown-link">
                     {{user.name}}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>个人中心</el-dropdown-item>
-                    <el-dropdown-item>我的博客</el-dropdown-item>
-                    <el-dropdown-item>我的动态</el-dropdown-item>
+                    <!-- <el-dropdown-item>我的博客</el-dropdown-item> -->
+                    <el-dropdown-item command="edit">修改信息</el-dropdown-item>
                     <el-dropdown-item command="exit" divided>退出</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
@@ -20,30 +20,47 @@
             <el-button type="text" @click="login('login')">登录</el-button>
             <el-button type="text" @click="login('sign')">注册</el-button>
         </div>
+        <div id="weChat" :class="{open: isOpen}">
+            <span @click="showChat" class="close">&times;</span>
+           <we-chat></we-chat> 
+        </div>
     </div>
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import weChat from '../chat/weChat'
 export default {
     name: 'shLogin',
     data() {
         return {
         }
     },
+    components: {
+        weChat
+    },
     computed: {
-        ...mapState(['user', 'countNum'])
+        ...mapState(['user', 'noticeList', 'isOpen']),
+        ...mapGetters(['msgListNum']),
+        num() {
+            return this.noticeList.length + this.msgListNum
+        }
     },
     methods: {
-        ...mapMutations(['setDialog']),
+        ...mapMutations(['setLoginDialog', 'setOpen']),
         ...mapActions(['logout']),
         handleCommand(command) {
             if(command == 'exit') {
                 this.logout()
+            } else if(command == 'edit') {
+                this.login('edit')
             }
         },
+        showChat() {
+            this.setOpen(!this.isOpen)
+        },
         login(type) {
-            this.setDialog({
+            this.setLoginDialog({
                 type: type,
                 centerDialogVisible: true
             })
@@ -72,6 +89,29 @@ export default {
             margin-right: 20px;
             font-size: 23px;
             cursor: pointer;
+        }
+
+        #weChat {
+            width: 600px;
+            height: 550px;
+            position: fixed;
+            top: 56px;
+            right: -600px;
+            transition: right 0.5s;
+            box-shadow: 0 2px 12px 0 rgba(0,0,0,.3);
+            &.open {
+                right: 10px;
+            }
+
+            .close {
+                position: absolute;
+                right: 5px;
+                top: 5px;
+                z-index: 1;
+                line-height: 1;
+                font-size: 20px;
+                cursor: pointer;
+            }
         }
     }
 </style>

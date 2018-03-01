@@ -14,6 +14,7 @@
 <script>
     import siderLeft from './sider-left'
     import siderRight from './sider-right'
+    
 
     export default {
         name: 'weChat',

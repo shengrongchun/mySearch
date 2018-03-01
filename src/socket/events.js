@@ -5,7 +5,7 @@ export default {
         return new Promise((res, rej) => {
             socket.emit('loginSuccess', data)
             socket.once('loginSuccess', data => {
-                if (!data) return rej(data)
+                if (data.type === 'error') return rej(data)
                 return res(data)
             })
         })
@@ -73,82 +73,69 @@ export default {
             })
         })
     },
-
-
-
-
-
-
-
-
-
-    getUser(from) {
-        return new Promise((res, rej) => {
-            socket.emit('getUser', { from })
-            socket.once('getUser', data => {
-                if (data.msg || data.message) return rej(data)
-                return res(data)
-            })
-        })
-    },
-    getGroups(from) {
-        return new Promise((res, rej) => {
-            socket.emit('getGroups', { from })
-            socket.once('getGroups', data => {
-                if (data.msg || data.message) return rej(data)
-                return res(data)
-            })
-        })
-    },
-    searchGroups(keyword) {
-        return new Promise((res, rej) => {
-            socket.emit('searchGroups', { keyword })
-            socket.once('searchGroups', data => {
-                if (data.msg || data.message) return rej(data)
-                return res(data)
-            })
-        })
-    },
-    createGroup(params) {
+    createGroup(params) {//
         return new Promise((res, rej) => {
             socket.emit('createGroup', params)
             socket.once('createGroup', data => {
-                if (data.msg || data.message) return rej(data)
+                if (data.error) return rej(data.error)
                 return res(data)
             })
         })
     },
-    addGroup(params) {
+    getGroups(from) {//
+        return new Promise((res, rej) => {
+            socket.emit('getGroups', { from })
+            socket.once('getGroups', data => {
+                if (data.error) return rej(data.error)
+                return res(data)
+            })
+        })
+    },
+    deleteGroup(params) {//
+        return new Promise((res, rej) => {
+            socket.emit('removeGroup', params)
+            socket.once('removeGroup', data => {
+                if (data.error) return rej(data.error)
+                return res(data)
+            })
+        })
+    },
+    searchGroups({keyword, from}) {//
+        return new Promise((res, rej) => {
+            socket.emit('searchGroups', { keyword, from })
+            socket.once('searchGroups', data => {
+                if (data.error) return rej(data.error)
+                return res(data)
+            })
+        })
+    },
+    addGroup(params) {//
         return new Promise((res, rej) => {
             socket.emit('addGroup', params)
             socket.once('addGroup', data => {
+                if (data.error) return rej(data.error)
+                return res(data)
+            })
+        })
+    },
+    updateUser(params) {//
+        return new Promise((res, rej) => {
+            socket.emit('updateUser', params)
+            socket.once('updateUser', data => {
                 if (data.msg || data.message) return rej(data)
                 return res(data)
             })
         })
     },
+
+
+
+
+
     pullMsg(params) {
         return new Promise((res, rej) => {
             socket.emit('pullMsg', params)
             socket.once('pullMsg', data => {
-                if (data.msg || data.message) return rej(data)
-                return res(data)
-            })
-        })
-    },
-    removeFriend(params) {
-        return new Promise((res, rej) => {
-            socket.emit('removeFriend', params)
-            socket.once('removeFriend', data => {
-                if (data.msg || data.message) return rej(data)
-                return res(data)
-            })
-        })
-    },
-    removeGroup(params) {
-        return new Promise((res, rej) => {
-            socket.emit('removeGroup', params)
-            socket.once('removeGroup', data => {
                 if (data.msg || data.message) return rej(data)
                 return res(data)
             })
@@ -163,32 +150,5 @@ export default {
             })
         })
     },
-    updateUser(params) {
-        return new Promise((res, rej) => {
-            socket.emit('updateUser', params)
-            socket.once('updateUser', data => {
-                if (data.msg || data.message) return rej(data)
-                return res(data)
-            })
-        })
-    },
-    modifyAvatar(params) {
-        return new Promise((res, rej) => {
-            socket.emit('modifyAvatar', params)
-            socket.once('modifyAvatar', data => {
-                if (data.msg || data.message) return rej(data)
-                return res(data)
-            })
-        })
-    },
-    uploadImg(params) {
-        return new Promise((res, rej) => {
-            socket.emit('uploadImg', params)
-            socket.once('uploadImg', data => {
-                if (data.msg || data.message) return rej(data)
-                return res(data)
-            })
-        })
-    }
 
 }

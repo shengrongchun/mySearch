@@ -1,6 +1,6 @@
 const db = require("../../model")
 
-module.exports = (allSocketList, socket, io) => ({ from, friendId, groupId, data }) => {
+module.exports = (allSocketList, socket) => ({ from, friendId, groupId, data }) => {
     let page = data.page || 1
 
     if (groupId) {

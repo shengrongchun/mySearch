@@ -1,6 +1,6 @@
 const User = require('../../model').User
 
-module.exports = (allSocketList, socket, io) => ({ fromId, friendId }) => {//
+module.exports = (allSocketList, socket) => ({ fromId, friendId }) => {//
 	Promise.all([
 		User.update({_id: fromId}, {$pull: {friends: friendId}}),
 		User.update({_id: friendId}, {$pull: {friends: fromId}})
