@@ -23,7 +23,7 @@ export default {
         background: #fff;
         color: #333;
         min-width: 900px;
-        font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+        font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif !important;
     }
     .clearfix:before,
     .clearfix:after {
@@ -50,5 +50,28 @@ export default {
                 margin-left: 5px;
             }
         }
+    }
+    .show-members.el-dropdown-menu {//显示群成员
+        overflow: inherit;
+        .el-dropdown-menu__item {
+            display: inline-block;
+            padding: 10px;
+            vertical-align: middle;
+            width: 50px;
+            line-height: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+            .avatar {
+                border-radius: 5px;
+                display: block;
+                margin-bottom: 5px;
+            }
+            .name {
+               font-size: 10px;
+            }
+        }
+        
     }
 </style>

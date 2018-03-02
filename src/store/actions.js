@@ -79,6 +79,7 @@ export default {
         //
         if (state.currentOne.owner) {
             params.groupId = state.currentOne._id
+            params.groupName = state.currentOne.name
         } else {
             params.friendId = state.currentOne._id
         }
@@ -87,18 +88,12 @@ export default {
             name: state.user.name,
             avatar: state.user.avatar,
             _id: state.user._id,
+            groupId:state.currentOne.owner?state.currentOne._id:null,
             msgId: state.currentOne._id,
             content: content
         })
         return ws.pushMsg(params).then((result) => {//把信息发送给对方
-            console.log(result)
-        },(error) => {
-            alert(error)
-        })
-    },
-    logout({ commit, state }, data) {//退出
-        return ws.logout(state.user).then((result) => {
-           commit('resetState')
+            //console.log(result)
         },(error) => {
             alert(error)
         })
@@ -136,7 +131,7 @@ export default {
             from: state.user._id,
             groupId: group._id
         }).then(() => {
-            commit('pushGroupsList', {name: group.name, avatar: group.avatar, _id: group._id, owner: group.owner})
+            commit('pushGroupsList', {name: group.name, avatar: group.avatar, _id: group._id, owner: group.owner?group.owner:'null'})
         })
     },
     updateUser({ commit, state }, data) {//更新user
@@ -151,6 +146,13 @@ export default {
             },(error)=> {
                 rej(error)
             })
+        })
+    },
+    getGroupMember({ commit, state }, data) {
+        commit('setGroupMemberList', [])
+        let groupId = data._id
+        return ws.getGroupMember({ groupId }).then(list => {
+            commit('setGroupMemberList', list)
         })
     },
 

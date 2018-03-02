@@ -2,7 +2,7 @@ const db = require("../../model")
 const Group = require("../../model").Group
 let item = null
 
-module.exports = (allSocketList, socket, allSocketMsgList) => ({ from, friendId, groupId, content }) => {//
+module.exports = (allSocketList, socket, allSocketMsgList) => ({ from, friendId, groupId, groupName, content }) => {//
     if (!content || !from) {
         socket.emit('pushMsg', {error: '消息字段不全' })
         return
@@ -24,6 +24,7 @@ module.exports = (allSocketList, socket, allSocketMsgList) => ({ from, friendId,
                             allSocketList[ item[i] ].emit('message', {
                                 from,
                                 groupId: message.toGroup,
+                                groupName: groupName,
                                 content: message.content
                             })
                         } else {//不在线，把信息保存
@@ -31,12 +32,14 @@ module.exports = (allSocketList, socket, allSocketMsgList) => ({ from, friendId,
                                 allSocketMsgList[ item[i] ].push({
                                     from,
                                     groupId: message.toGroup,
+                                    groupName: groupName,
                                     content: message.content
                                 })
                             } else {
                                 allSocketMsgList[ item[i] ] = [{
                                     from,
                                     groupId: message.toGroup,
+                                    groupName: groupName,
                                     content: message.content
                                 }]
                             }

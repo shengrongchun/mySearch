@@ -9,7 +9,7 @@
                 <div class="add">
                     <el-dropdown class="dropdown" trigger="click" @command="showDialog">
                         <span class="el-dropdown-link">
-                            <i class="icon iconfont icon-other"></i>
+                            <i class="iconself iconfont icon-other"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item command="friends">加好友</el-dropdown-item>
@@ -38,20 +38,20 @@
                 <ul>
                     <li @click="type='info'">
                         <el-badge :value="msgListNum" :max="99" class="item">
-                            <i v-if="type == 'info'" class="icon iconfont icon-interactive_fill active"></i>
-                            <i v-else class="icon iconfont icon-interactive"></i>
+                            <i v-if="type == 'info'" class="iconself iconfont icon-interactive_fill active"></i>
+                            <i v-else class="iconself iconfont icon-interactive"></i>
                         </el-badge>
                     </li>
                     <li @click="type='friends'">
                         <el-badge :value="0" :max="99" class="item">
-                            <i v-if="type=='friends'" class="icon iconfont icon-addressbook_fill active"></i>
-                            <i v-else class="icon iconfont icon-addressbook"></i>
+                            <i v-if="type=='friends'" class="iconself iconfont icon-addressbook_fill active"></i>
+                            <i v-else class="iconself iconfont icon-addressbook"></i>
                         </el-badge>
                     </li>
                     <li @click="type='notice'">
                         <el-badge :value="noticeList.length" :max="99" class="item">
-                            <i v-if="type == 'notice'" class="icon iconfont icon-remind_fill active"></i>
-                            <i v-else class="icon iconfont icon-remind"></i>
+                            <i v-if="type == 'notice'" class="iconself iconfont icon-remind_fill active"></i>
+                            <i v-else class="iconself iconfont icon-remind"></i>
                         </el-badge>
                     </li>
                 </ul>
@@ -83,7 +83,7 @@
                         text-color="#fff"
                         active-text-color="#ffd04b">
                         <el-menu-item-group title="群组" v-if="groupsList.length>0">
-                            <el-menu-item @click="changeActiveOne(group)" v-for="(group, key) in groupsList" :key="key" :index="key+''"
+                            <el-menu-item @click="changeActiveOne(group)" v-for="(group, key) in groupsList" :key="key" :index="key+'group'"
                                 >
                                 <div @contextmenu="showMenu($event, key, contextMenuGroData)">
                                     <img :src="group.avatar"/>
@@ -98,7 +98,7 @@
                             </el-menu-item>
                         </el-menu-item-group>
                         <el-menu-item-group title="好友">
-                            <el-menu-item @click="changeActiveOne(friend)" v-for="(friend, key) in friendsList" :key="key" :index="key+''"
+                            <el-menu-item @click="changeActiveOne(friend)" v-for="(friend, key) in friendsList" :key="key" :index="key+'fri'"
                                 >
                                 <div @contextmenu="showMenu($event, key, contextMenuFriData)">
                                     <img :src="friend.avatar"/>

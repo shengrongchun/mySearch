@@ -55,15 +55,6 @@ export default {
             })
         })
     },
-    logout(params) {//
-        return new Promise((res, rej) => {
-            socket.emit('logout', params)
-            socket.once('logout', data => {
-                if (data.error) return rej(data.error)
-                return res(data.ok)
-            })
-        })
-    },
     deleteUser(params) {//
         return new Promise((res, rej) => {
             socket.emit('removeFriend', params)
@@ -127,7 +118,15 @@ export default {
             })
         })
     },
-
+    getGroupMember(params) {//
+        return new Promise((res, rej) => {
+            socket.emit('getGroupMember', params)
+            socket.once('getGroupMember', data => {
+                if (data.msg || data.message) return rej(data)
+                return res(data)
+            })
+        })
+    },
 
 
 
@@ -141,14 +140,6 @@ export default {
             })
         })
     },
-    getGroupMember(params) {
-        return new Promise((res, rej) => {
-            socket.emit('getGroupMember', params)
-            socket.once('getGroupMember', data => {
-                if (data.msg || data.message) return rej(data)
-                return res(data)
-            })
-        })
-    },
+    
 
 }

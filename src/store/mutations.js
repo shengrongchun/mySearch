@@ -25,6 +25,7 @@ var stateData = {
     counts: {},  // 消息对象
     noticeList: [], //notice列表
     isOpen: false,//weChat界面是否打开了
+    groupMemberList: [],//群成员
    
 }
 //state
@@ -42,19 +43,6 @@ export const getters = {//getters方法有效的前提条件是必须在state中
 
 //mutations
 export const mutations = {
-    resetState: (state) => {//清空state
-        state.user = { _id: null,name: null,avatar: null}
-        state.counts = {}
-        state.searchResultList = []
-        state.searchResultGroupsList = []
-        state.friendsList = []
-        state.groupsList = []
-        state.currentOne = null
-        state.messages = {}
-        state.activeMsgList = []
-        state.noticeList = []
-        state.isOpen = false
-    },
     loginError: (state, data) => {
         state.user = {
             _id: null,
@@ -89,6 +77,9 @@ export const mutations = {
     setGroupsList:(state, list) => {//设置群组列表
         state.groupsList = list
     },
+    setGroupMemberList:(state, list) => {//设置群组成员列表
+        state.groupMemberList = list
+    },
     pushGroupsList:(state, item) => {//push群组列表
         state.groupsList.push(item)
     },
@@ -112,13 +103,14 @@ export const mutations = {
         } 
     },
     changeCurrentOne:(state, currentOne) => {//改变当前选中页
+        state.currentOne = null
         state.currentOne = currentOne
         //state.counts[currentOne._id] = 0
         Vue.set(state.counts, currentOne._id, 0)//消除点击的消息数目
     },
     clearCurrentone: (state) => {
         //state.counts[state.currentOne._id] = 0
-        Vue.set(state.counts, currentOne._id, 0)//消除点击的消息数目
+        Vue.set(state.counts, state.currentOne._id, 0)//消除点击的消息数目
         state.currentOne = null
     },
     pushMsg: (state, msg) => {//本地push信息

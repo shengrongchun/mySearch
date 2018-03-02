@@ -61,7 +61,7 @@ var httpQuery = function(response) {
     var data = '';
     var req = getHttp.request(options, function (res) { 
         //console.log(options)
-        console.log('STATUS: ' + res.statusCode); 
+        //console.log('STATUS: ' + res.statusCode); 
         res.setEncoding('utf8'); 
         res.on('data', function (chunk) { 
             data += chunk.replace('name="referrer"','');

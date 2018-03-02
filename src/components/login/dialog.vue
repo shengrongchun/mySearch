@@ -1,7 +1,7 @@
 <template>
     <div>
         <!--登录弹框-->
-        <el-dialog v-if="loginDialog.type !='edit'" v-loading="loading" :title="loginDialog.type == 'login'?'登录':'注册'" :visible.sync="loginDialog.centerDialogVisible" width="35%" center @close="loginDialog.centerDialogVisible = false">
+        <el-dialog v-if="loginDialog.type !='edit'" v-loading="loading" :title="loginDialog.type == 'login'?'登录':'注册'" :visible.sync="loginDialog.centerDialogVisible" width="35%" center @close="clearData">
             <el-form :model="loginForm" :rules="rules" ref="loginForm" label-width="100px" class="demo-loginForm" status-icon>
                 <el-form-item v-if="loginDialog.type == 'sign'" label="用户名称" prop="name">
                     <el-input v-model="loginForm.name" auto-complete="off"></el-input>
@@ -35,7 +35,7 @@
             </span>
         </el-dialog>
 
-        <el-dialog v-if="loginDialog.type =='edit'" v-loading="loading" title="修改信息" :visible.sync="loginDialog.centerDialogVisible" width="35%" center @close="loginDialog.centerDialogVisible = false">
+        <el-dialog v-if="loginDialog.type =='edit'" v-loading="loading" title="修改信息" :visible.sync="loginDialog.centerDialogVisible" width="35%" center @close="clearData">
             <el-form :model="loginForm" :rules="rules" ref="loginForm" label-width="100px" class="demo-loginForm" status-icon>
                 <el-form-item label="用户名称" prop="name">
                     <el-input v-model="loginForm.name" auto-complete="off"></el-input>
@@ -158,6 +158,7 @@
                 this.loginForm.pwdAgain = null
                 this.loginForm.email = null
                 this.loginForm.avatar = null
+                this.loginDialog.centerDialogVisible = false
             },
             submitForm(formName) {
                 this.showTips = false

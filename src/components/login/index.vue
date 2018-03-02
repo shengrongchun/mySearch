@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState, mapGetters, mapMutations } from 'vuex'
 import weChat from '../chat/weChat'
 export default {
     name: 'shLogin',
@@ -48,10 +48,9 @@ export default {
     },
     methods: {
         ...mapMutations(['setLoginDialog', 'setOpen']),
-        ...mapActions(['logout']),
         handleCommand(command) {
             if(command == 'exit') {
-                this.logout()
+                window.location.reload()
             } else if(command == 'edit') {
                 this.login('edit')
             }

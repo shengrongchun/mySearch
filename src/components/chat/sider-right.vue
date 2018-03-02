@@ -1,24 +1,31 @@
 <template>
     <div class="sider-right">
-        <div v-if="currentOne">
-            <div class="right-header">
-                <el-dropdown @command="handleCommand">
-                <span class="el-dropdown-link">
-                    {{currentOne.name}}<i class="el-icon-arrow-down el-icon--right"></i>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="delete">删除用户</el-dropdown-item>
-                </el-dropdown-menu>
-            </el-dropdown>
+        <div>
+            <div  v-if="currentOne" class="right-header">
+                <el-dropdown @visible-change="showHandleCommand" trigger="click" v-if="currentOne.owner" @command="handleCommand">
+                    <span class="el-dropdown-link">
+                        {{currentOne.name}}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </span>
+                    <el-dropdown-menu slot="dropdown" class="show-members">
+                        <el-dropdown-item v-show="groupMemberList.length>0" :key="key+''" v-for="(item,key) in groupMemberList" :command="item" :title="item.name">
+                            <img width="50" class="avatar" :src="item.avatar"/>
+                            <span class="name">{{ item.name }}</span>
+                        </el-dropdown-item>
+                        <el-dropdown-item v-show="groupMemberList.length==0">
+                            <i class="el-icon-loading"></i>
+                        </el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+                <span v-else>{{currentOne.name}}</span>
             </div>
-            <div class="right-body" id="right-body">
+            <div  v-if="currentOne" class="right-body" id="right-body">
                 <div v-if="messageList&&messageList.length > 0">
                     <div class="message" :class="{'me': user._id === msg._id}" v-for="(msg, key) in messageList" 
                         :key="key">
                         <img :title="msg.name" class="avatar" :src="msg.avatar"/>
                         <div class="content">
                             <h4 v-if="user._id !== msg._id" class="nickname">{{msg.name}}</h4>
-                            <div class="bubble" :class="{'right': user._id === msg._id,'left':user._id !== msg._id}">
+                            <div class="bubble" :class="{'rightself': user._id === msg._id,'left':user._id !== msg._id}">
                                 <div class="bubble_cont">
                                     <pre v-html="msg.content"></pre>
                                 </div>
@@ -28,7 +35,7 @@
                 </div>
                 <p v-else class="noMsg">暂时没有新消息</p>
             </div>
-            <div class="right-footer">
+            <div v-show="currentOne" class="right-footer">
                 <div class="bar">
                     <div class="face" v-if="faceShow" v-clickoutside="hideFace">
                         <div class="faceImg">
@@ -38,7 +45,7 @@
                         </div>
                     </div>
                     <span @click.stop="faceShow = true">
-                        <i class="icon iconfont icon-emoji"></i>
+                        <i class="iconself iconfont icon-emoji"></i>
                     </span>
                 </div>
                 <div class="submit">
@@ -54,7 +61,6 @@
                 </div>
             </div> 
         </div>
-        <div v-else></div>
     </div>
 </template>
 
@@ -72,7 +78,7 @@
             }
         },
         computed: {
-            ...mapState(['currentOne', 'messages', 'user', 'counts']),
+            ...mapState(['currentOne', 'messages', 'user', 'counts', 'groupMemberList']),
             messageList() {
                 this.scrollTop()
                 return this.messages[this.currentOne._id]
@@ -82,7 +88,7 @@
             }
         },
         methods: {
-            ...mapActions(['pushMsg', 'deleteUser', 'changeCurrentOne']),
+            ...mapActions(['pushMsg', 'deleteUser', 'changeCurrentOne', 'getGroupMember']),
             noCurrentNum() {
                 if(this.counts[this.currentOne._id]>0) {
                     this.changeCurrentOne(this.currentOne)
@@ -94,10 +100,16 @@
                 this.pushMsg(ctt)
                 this.editDom.innerHTML = null
             },
-            handleCommand(type) {
-                if(type === 'delete') {//删除用户
-                    this.deleteUser(this.currentOne)
+            showHandleCommand(mask) {
+                if(mask) {
+                    this.getGroupMember(this.currentOne)
                 }
+            },
+            handleCommand(item) {
+                if(item._id == this.user._id) {
+                    return
+                }
+                this.changeCurrentOne(item)
             },
             breakLine($e) {
                 this.editDom.innerHTML = this.editDom.innerHTML + '<br></br>'
@@ -246,7 +258,7 @@
                             background: #fff;
                         }
 
-                        &.right {
+                        &.rightself {
                             background: #b2e281;
                         }
 
@@ -281,7 +293,7 @@
                             border-right-width: 4px;
                         }
 
-                        &.right:before,&.right:after {
+                        &.rightself:before,&.rightself:after {
                             left: 100%;
                             border-left-color: #b2e281;
                             border-left-width: 4px;
@@ -300,7 +312,7 @@
                 height: 30px;
                 position: relative;
                 
-                .icon {
+                .iconself {
                     font-size: 30px;
                     color: #bbb;
                     cursor: pointer;

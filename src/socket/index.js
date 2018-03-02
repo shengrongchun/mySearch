@@ -14,7 +14,7 @@ function removeAllSocketListener() {
 // 登陆后移除前一个用户的消息监听器,并为新用户添加消息监听器
 function addUserListener(user, state, commit) {
     removeAllSocketListener()//删除之前所有监听
-    socket.on('message', ({ from, content, groupId }) => {
+    socket.on('message', ({ from, content, groupId, groupName }) => {
         if(groupId) {//群信息
             commit('pushMsg', {groupId:groupId,name:from.name,avatar:from.avatar,msgId:groupId,content:content})
             if(state.currentOne && state.currentOne._id == groupId && state.isOpen) {
@@ -31,7 +31,7 @@ function addUserListener(user, state, commit) {
         //
         if(!state.isOpen) {
             window.vue.$notify({
-                title: from.name,
+                title: from.name+(groupName?' '+groupName:''),
                 dangerouslyUseHTMLString: true,
                 position: 'bottom-right',
                 message: content.indexOf('<img')>-1 ? '[图片]' : content

@@ -21,6 +21,12 @@ var chat = function(server) {
         for(let eventName in map) {
             socket.on( eventName, map[eventName](allSocketList, socket, allSocketMsgList) )
         }
+        //监听下线
+        socket.on('disconnect',(data) => {
+            if(allSocketList[socket.tempId]) {
+                allSocketList[socket.tempId] = null
+            }
+        })
     })
 }
 //

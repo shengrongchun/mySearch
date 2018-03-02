@@ -28,7 +28,7 @@
                 </el-tabs>
             </div>
             <div class="bodynews">
-                .......
+                
             </div>
         </div>
     </div>
@@ -106,12 +106,8 @@
             }
             //
             window.onbeforeunload = function() {
-                console.log("退出")
+                return '加载'
             }
-            window.onunload = function() {
-                that.logout()
-            }
-
         },
         components: {
             shHeader
