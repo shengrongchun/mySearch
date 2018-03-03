@@ -28,7 +28,11 @@
                 </el-tabs>
             </div>
             <div class="bodynews">
-                
+                <el-carousel :interval="5000">
+                    <el-carousel-item v-for="(item,key) in 11" :key="key">
+                        <img :src="require('@/assets/img/'+item+'.jpg')"/>
+                    </el-carousel-item>
+                </el-carousel>
             </div>
         </div>
     </div>
@@ -151,11 +155,19 @@
             -webkit-box-sizing: border-box; /* Safari */ 
             float: left;
             width: 40%;
-            height: 300px;
             background: #fff;
             border-left: 1px solid #e1e1e1;
             //padding: 0 10px;
             margin-top: 40px;
+            /deep/ .el-carousel__container {
+                height: 480px;
+            }
+            .el-carousel__item {
+                img {
+                    height: 100%;
+                    width: 100%;
+                }
+            }
         }
     }
 </style>

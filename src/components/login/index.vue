@@ -10,8 +10,8 @@
                     {{user.name}}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                    <!-- <el-dropdown-item>我的博客</el-dropdown-item> -->
                     <el-dropdown-item command="edit">修改信息</el-dropdown-item>
+                    <el-dropdown-item command="del">注销</el-dropdown-item>
                     <el-dropdown-item command="exit" divided>退出</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from 'vuex'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import weChat from '../chat/weChat'
 export default {
     name: 'shLogin',
@@ -48,11 +48,17 @@ export default {
     },
     methods: {
         ...mapMutations(['setLoginDialog', 'setOpen']),
+        ...mapActions(['delMyself']),
         handleCommand(command) {
             if(command == 'exit') {
                 window.location.reload()
             } else if(command == 'edit') {
                 this.login('edit')
+            } else if(command == 'del') {
+                this.$confirm('此操作将会注销用户，确定注销吗？')
+                    .then(() => {
+                        this.delMyself()
+                    }).catch(() => {})
             }
         },
         showChat() {
@@ -63,7 +69,6 @@ export default {
                 type: type,
                 centerDialogVisible: true
             })
-            //this.$emit('clear')
         }
     }
 }

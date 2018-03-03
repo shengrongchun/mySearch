@@ -155,6 +155,13 @@ export default {
             commit('setGroupMemberList', list)
         })
     },
+    delMyself({ commit, state }) {
+        return ws.delMyself(state.user._id).then(data => {
+            window.location.reload()
+        },(error)=> {
+            alert(error)
+        })
+    },
 
 
 }

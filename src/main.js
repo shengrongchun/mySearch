@@ -10,7 +10,8 @@ import store from './store'
 import { Button, RadioButton, RadioGroup, 
 Autocomplete, Tabs, TabPane, Loading, Dialog, Form, FormItem, Input, Alert,
 Dropdown, DropdownMenu, DropdownItem, Badge, Menu, MenuItem, Row, Col,
-MenuItemGroup, Tooltip, checkbox, checkboxGroup, Notification, MessageBox
+MenuItemGroup, Tooltip, checkbox, checkboxGroup, Notification, MessageBox,
+Carousel, CarouselItem
 } from 'element-ui'
 //
 import VueContextMenu from 'vue-contextmenu'
@@ -44,6 +45,8 @@ Vue.use(Col)
 Vue.use(Tooltip)
 Vue.use(checkbox)
 Vue.use(checkboxGroup)
+Vue.use(Carousel)
+Vue.use(CarouselItem)
 
 Vue.prototype.$notify = Notification
 Vue.prototype.$confirm = MessageBox.confirm

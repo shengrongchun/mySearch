@@ -127,6 +127,15 @@ export default {
             })
         })
     },
+    delMyself(params) {//
+        return new Promise((res, rej) => {
+            socket.emit('delMyself', params)
+            socket.once('delMyself', data => {
+                if (data.msg || data.message) return rej(data)
+                return res(data)
+            })
+        })
+    },
 
 
 
