@@ -76,10 +76,12 @@
                 }).then((res)=> {
                     this[res.data.type] = res.data.data
                     this.searchValue = decodeURI(res.data.returnKey)
-                    window.pageYOffset = 0
+                    if(window.pageYOffset) {window.pageYOffset = 0}
                     document.documentElement.scrollTop = 0
                     document.body.scrollTop = 0
                     this.loading = false
+                    
+
                 },(res)=> {
                     this[res.data.type] = '<div style="text-align:center;">请求出错啦</div>'
                     this.loading = false

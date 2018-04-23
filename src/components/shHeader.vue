@@ -10,7 +10,7 @@
                     <el-autocomplete  suffix-icon="el-icon-search" class="inline-block" placeholder="请输入搜索内容" v-model="searchModel" size="medium" :trigger-on-focus="false"
                     @keyup.enter.native="search" :fetch-suggestions="querySearch"
                     >
-                        <el-button slot="append" @click="search">搜索一下</el-button>
+                        <template slot="append"><span @click="search" :style="{cursor:'pointer'}">搜索一下</span></template>
                     </el-autocomplete>
                 </div>
                 <sh-login></sh-login>
@@ -104,6 +104,7 @@ export default {
                 display: inline-block;
                 .el-autocomplete {
                     width: 600px;
+                    & /deep/ .el-input-group > .el-input__inner {display: inline-block;}//这是一处ie bug的修改
                 }
             }
 

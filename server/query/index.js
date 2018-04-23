@@ -22,6 +22,7 @@ var options = {
     path: '', 
     method: 'GET',
     headers: {
+        'Accept-Language':'zh-CN,zh;q=0.9',
         'Accept':'*/*',
         'Connection':'keep-alive',
         'Host':'www.baidu.com',
