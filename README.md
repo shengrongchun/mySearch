@@ -1,6 +1,6 @@
 # my-search
 
-> A Vue.js project
+> A Vue.js project 网页版微信
 
 ## Build Setup
 
@@ -17,5 +17,5 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
-
+[演示地址](http://120.55.46.128:9001) 用户名：1010449769@qq.com, 密码：123123。当然也可以自己注册
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
